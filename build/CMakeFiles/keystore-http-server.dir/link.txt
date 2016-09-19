@@ -1,0 +1,1 @@
+/usr/bin/c++    -std=c++11 -Wall -Wextra    CMakeFiles/keystore-http-server.dir/keystore-http-server.cpp.o  -o keystore-http-server -rdynamic -lboost_regex -lboost_system -lboost_thread -lboost_filesystem -lboost_date_time -lpthread -lpthread -lwt -lwtdbo -lwtdbopostgres 
