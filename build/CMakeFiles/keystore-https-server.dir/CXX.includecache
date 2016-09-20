@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/home/cscherer/Projects/pes7-keystore/client_http.hpp
+/home/codyscherer/Projects/pes7-keystore/client_http.hpp
 boost/asio.hpp
 -
 boost/utility/string_ref.hpp
@@ -22,17 +22,17 @@ map
 random
 -
 
-/home/cscherer/Projects/pes7-keystore/client_https.hpp
+/home/codyscherer/Projects/pes7-keystore/client_https.hpp
 client_http.hpp
-/home/cscherer/Projects/pes7-keystore/client_http.hpp
+/home/codyscherer/Projects/pes7-keystore/client_http.hpp
 boost/asio/ssl.hpp
 -
 
-/home/cscherer/Projects/pes7-keystore/keystore-https-server.cpp
+/home/codyscherer/Projects/pes7-keystore/keystore-https-server.cpp
 server_https.hpp
-/home/cscherer/Projects/pes7-keystore/server_https.hpp
+/home/codyscherer/Projects/pes7-keystore/server_https.hpp
 client_https.hpp
-/home/cscherer/Projects/pes7-keystore/client_https.hpp
+/home/codyscherer/Projects/pes7-keystore/client_https.hpp
 boost/property_tree/ptree.hpp
 -
 boost/property_tree/json_parser.hpp
@@ -46,7 +46,7 @@ vector
 algorithm
 -
 
-/home/cscherer/Projects/pes7-keystore/server_http.hpp
+/home/codyscherer/Projects/pes7-keystore/server_http.hpp
 boost/asio.hpp
 -
 boost/regex.hpp
@@ -66,9 +66,9 @@ iostream
 sstream
 -
 
-/home/cscherer/Projects/pes7-keystore/server_https.hpp
+/home/codyscherer/Projects/pes7-keystore/server_https.hpp
 server_http.hpp
-/home/cscherer/Projects/pes7-keystore/server_http.hpp
+/home/codyscherer/Projects/pes7-keystore/server_http.hpp
 boost/asio/ssl.hpp
 -
 

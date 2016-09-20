@@ -1,4 +1,4 @@
-# Install script for directory: /home/cscherer/Projects/pes7-keystore
+# Install script for directory: /home/codyscherer/Projects/pes7-keystore
 
 # Set the install prefix
 IF(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -34,10 +34,10 @@ ENDIF(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
 
 IF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
   FILE(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/simple-web-server" TYPE FILE FILES
-    "/home/cscherer/Projects/pes7-keystore/server_http.hpp"
-    "/home/cscherer/Projects/pes7-keystore/client_http.hpp"
-    "/home/cscherer/Projects/pes7-keystore/server_https.hpp"
-    "/home/cscherer/Projects/pes7-keystore/client_https.hpp"
+    "/home/codyscherer/Projects/pes7-keystore/server_http.hpp"
+    "/home/codyscherer/Projects/pes7-keystore/client_http.hpp"
+    "/home/codyscherer/Projects/pes7-keystore/server_https.hpp"
+    "/home/codyscherer/Projects/pes7-keystore/client_https.hpp"
     )
 ENDIF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
 
@@ -47,7 +47,7 @@ ELSE(CMAKE_INSTALL_COMPONENT)
   SET(CMAKE_INSTALL_MANIFEST "install_manifest.txt")
 ENDIF(CMAKE_INSTALL_COMPONENT)
 
-FILE(WRITE "/home/cscherer/Projects/pes7-keystore/build/${CMAKE_INSTALL_MANIFEST}" "")
+FILE(WRITE "/home/codyscherer/Projects/pes7-keystore/build/${CMAKE_INSTALL_MANIFEST}" "")
 FOREACH(file ${CMAKE_INSTALL_MANIFEST_FILES})
-  FILE(APPEND "/home/cscherer/Projects/pes7-keystore/build/${CMAKE_INSTALL_MANIFEST}" "${file}\n")
+  FILE(APPEND "/home/codyscherer/Projects/pes7-keystore/build/${CMAKE_INSTALL_MANIFEST}" "${file}\n")
 ENDFOREACH(file)

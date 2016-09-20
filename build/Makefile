@@ -38,22 +38,19 @@ RM = /usr/bin/cmake -E remove -f
 # Escaping for special characters.
 EQUALS = =
 
-# The program to use to edit the cache.
-CMAKE_EDIT_COMMAND = /usr/bin/cmake-gui
-
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/cscherer/Projects/pes7-keystore
+CMAKE_SOURCE_DIR = /home/codyscherer/Projects/pes7-keystore
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/cscherer/Projects/pes7-keystore/build
+CMAKE_BINARY_DIR = /home/codyscherer/Projects/pes7-keystore/build
 
 #=============================================================================
 # Targets provided globally by CMake.
 
 # Special rule for the target edit_cache
 edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
-	/usr/bin/cmake-gui -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running interactive CMake command-line interface..."
+	/usr/bin/cmake -i .
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -113,9 +110,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/cscherer/Projects/pes7-keystore/build/CMakeFiles /home/cscherer/Projects/pes7-keystore/build/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/codyscherer/Projects/pes7-keystore/build/CMakeFiles /home/codyscherer/Projects/pes7-keystore/build/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/cscherer/Projects/pes7-keystore/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/codyscherer/Projects/pes7-keystore/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -168,6 +165,19 @@ keystore-https-server/fast:
 	$(MAKE) -f CMakeFiles/keystore-https-server.dir/build.make CMakeFiles/keystore-https-server.dir/build
 .PHONY : keystore-https-server/fast
 
+#=============================================================================
+# Target rules for targets named testwrapper
+
+# Build rule for target.
+testwrapper: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 testwrapper
+.PHONY : testwrapper
+
+# fast build rule for target.
+testwrapper/fast:
+	$(MAKE) -f CMakeFiles/testwrapper.dir/build.make CMakeFiles/testwrapper.dir/build
+.PHONY : testwrapper/fast
+
 keystore-http-server.o: keystore-http-server.cpp.o
 .PHONY : keystore-http-server.o
 
@@ -216,6 +226,30 @@ keystore-https-server.cpp.s:
 	$(MAKE) -f CMakeFiles/keystore-https-server.dir/build.make CMakeFiles/keystore-https-server.dir/keystore-https-server.cpp.s
 .PHONY : keystore-https-server.cpp.s
 
+testwrapper.o: testwrapper.cpp.o
+.PHONY : testwrapper.o
+
+# target to build an object file
+testwrapper.cpp.o:
+	$(MAKE) -f CMakeFiles/testwrapper.dir/build.make CMakeFiles/testwrapper.dir/testwrapper.cpp.o
+.PHONY : testwrapper.cpp.o
+
+testwrapper.i: testwrapper.cpp.i
+.PHONY : testwrapper.i
+
+# target to preprocess a source file
+testwrapper.cpp.i:
+	$(MAKE) -f CMakeFiles/testwrapper.dir/build.make CMakeFiles/testwrapper.dir/testwrapper.cpp.i
+.PHONY : testwrapper.cpp.i
+
+testwrapper.s: testwrapper.cpp.s
+.PHONY : testwrapper.s
+
+# target to generate assembly for a file
+testwrapper.cpp.s:
+	$(MAKE) -f CMakeFiles/testwrapper.dir/build.make CMakeFiles/testwrapper.dir/testwrapper.cpp.s
+.PHONY : testwrapper.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -230,12 +264,16 @@ help:
 	@echo "... keystore-https-server"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+	@echo "... testwrapper"
 	@echo "... keystore-http-server.o"
 	@echo "... keystore-http-server.i"
 	@echo "... keystore-http-server.s"
 	@echo "... keystore-https-server.o"
 	@echo "... keystore-https-server.i"
 	@echo "... keystore-https-server.s"
+	@echo "... testwrapper.o"
+	@echo "... testwrapper.i"
+	@echo "... testwrapper.s"
 .PHONY : help
 
 

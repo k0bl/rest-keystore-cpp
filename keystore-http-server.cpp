@@ -13,12 +13,13 @@
 #include <algorithm>
 
 //Dbo stuff
-#include <Wt/WString>
 #include <Wt/Dbo/Dbo>
 #include <Wt/Dbo/Session>
 #include <Wt/Dbo/backend/Postgres>
 //cred object
 #include "Cred.h"
+//crypto
+#include "crypto/cryptopp_wrapper.h"
 
 using namespace std;
 //Added for the json-example:
@@ -32,7 +33,7 @@ typedef SimpleWeb::Client<SimpleWeb::HTTP> HttpClient;
 
 //postgres connection info for dbo    
 const char *pgconninfo = "hostaddr = 127.0.0.1 port = 5432 user = pes7-keystore dbname = pes7-keystore password = Falcon1337";
-
+std::string my_key = "0ZmY7gLhG7vghXnUF54L5495lcfJTovT";
 //Added for the default_resource example
 void default_resource_send(const HttpServer &server, shared_ptr<HttpServer::Response> response,
                            shared_ptr<ifstream> ifs, shared_ptr<vector<char> > buffer);
@@ -44,43 +45,7 @@ int main() {
     //1 thread is usually faster than several threads
     HttpServer server(8080, 1);
     std::cout << "Starting HTTP server on port 8080" << std::endl;
-    //Add resources using path-regex and method-string, and an anonymous function
-    //POST-example for the path /string, responds the posted string
-    server.resource["^/string$"]["POST"]=[](shared_ptr<HttpServer::Response> response, shared_ptr<HttpServer::Request> request) {
-        //Retrieve string:
-        auto content=request->content.string();
-        //request->content.string() is a convenience function for:
-        //stringstream ss;
-        //ss << request->content.rdbuf();
-        //string content=ss.str();
-        
-        *response << "HTTP/1.1 200 OK\r\nContent-Length: " << content.length() << "\r\n\r\n" << content;
-    };
     
-    //POST-example for the path /json, responds firstName+" "+lastName from the posted json
-    //Responds with an appropriate error message if the posted json is not valid, or if firstName or lastName is missing
-    //Example posted json:
-    //{
-    //  "firstName": "John",
-    //  "lastName": "Smith",
-    //  "age": 25
-    //}
-    server.resource["^/json$"]["POST"]=[](shared_ptr<HttpServer::Response> response, shared_ptr<HttpServer::Request> request) {
-        try {
-            ptree pt;
-            read_json(request->content, pt);
-
-            string name=pt.get<string>("firstName")+" "+pt.get<string>("lastName");
-            std::cout << "STRING FROM POST REQUEST: "<<request->content.string();
-            *response << "HTTP/1.1 200 OK\r\n"
-                      << "Content-Type: application/json\r\n"
-                      << "Content-Length: " << name.length() << "\r\n\r\n"
-                      << name;
-        }
-        catch(exception& e) {
-            *response << "HTTP/1.1 400 Bad Request\r\nContent-Length: " << strlen(e.what()) << "\r\n\r\n" << e.what();
-        }
-    };
 
     //POST-example for the path /credentials, responds with the credentials from the datastore
     //Responds with an appropriate error message if the posted json is not valid, or if attributes are missing
@@ -98,6 +63,26 @@ int main() {
             string cred_id=pt.get<string>("cred_id");
             string username=pt.get<string>("username");
             string password=pt.get<string>("password");
+            
+            string startcrypt="ENCRYPTING CREDENTIALS FOR: "+cred_id;
+            std::cout << startcrypt << std::endl;
+            
+            //encrypt before storing in database
+            SpaceCrypto::CryptTwoFish cryptusername;
+            SpaceCrypto::CryptTwoFish cryptpassword;
+            cryptusername.setPlainString(username);
+            cryptpassword.setPlainString(password);
+            cryptusername.setKey(my_key);
+            cryptpassword.setKey(my_key);
+
+            std::string usernamecrypt_ = cryptusername.Encrypt();
+            std::string passwordcrypt_ = cryptpassword.Encrypt();
+            
+            cout<<"Encrypted username: "<<usernamecrypt_<<endl;
+            cout<<"Encrypted password: "<<passwordcrypt_<<endl;
+            
+            string endcrypt="DONE ENCRYPTING CREDENTIALS FOR: "+cred_id;
+            std::cout << endcrypt << std::endl;
             
             //setup the postgres connection
             Wt::Dbo::Session dbsession;
@@ -124,14 +109,14 @@ int main() {
             dbo::Transaction storetrans(dbsession);
             dbo::ptr<Cred> cred = dbsession.add(new Cred());
 
-            cred.modify()->username_ = username;
-            cred.modify()->password_ = password;
+            cred.modify()->username_ = usernamecrypt_;
+            cred.modify()->password_ = passwordcrypt_;
             cred.modify()->credId_ = cred_id;
 
             storetrans.commit();
 
-            string res="CREDENTIALS STORED SUCCESSFULLY for: "+cred_id;
-            std::cout << res << std::endl;      
+            string res="ENCRYPTED CREDENTIALS STORED SUCCESSFULLY for: "+cred_id;
+            std::cout << res << std::endl;
 
             *response << "HTTP/1.1 200 OK\r\n"
                       << "Content-Type: application/json\r\n"
@@ -143,29 +128,56 @@ int main() {
         }
     };
 
-
-
-    //GET-example for the path /info
-    //Responds with request-information
-    server.resource["^/info$"]["GET"]=[](shared_ptr<HttpServer::Response> response, shared_ptr<HttpServer::Request> request) {
-        stringstream content_stream;
-        content_stream << "<h1>Request from " << request->remote_endpoint_address << " (" << request->remote_endpoint_port << ")</h1>";
-        content_stream << request->method << " " << request->path << " HTTP/" << request->http_version << "<br>";
-        for(auto& header: request->header) {
-            content_stream << header.first << ": " << header.second << "<br>";
-        }
-        
-        //find length of content_stream (length received using content_stream.tellp())
-        content_stream.seekp(0, ios::end);
-        
-        *response <<  "HTTP/1.1 200 OK\r\nContent-Length: " << content_stream.tellp() << "\r\n\r\n" << content_stream.rdbuf();
-    };
-    
     //GET-example for the path /match/[number], responds with the matched string in path (number)
     //For instance a request GET /match/123 will receive: 123
-    server.resource["^/match/([0-9]+)$"]["GET"]=[&server](shared_ptr<HttpServer::Response> response, shared_ptr<HttpServer::Request> request) {
+    server.resource["^/credentials/([_a-z0-9-]+)$"]["GET"]=[&server](shared_ptr<HttpServer::Response> response, shared_ptr<HttpServer::Request> request) {
         string number=request->path_match[1];
-        *response << "HTTP/1.1 200 OK\r\nContent-Length: " << number.length() << "\r\n\r\n" << number;
+        //get the credentials from the database
+        Wt::Dbo::Session dbsession;
+        Wt::Dbo::backend::Postgres pg_ = Wt::Dbo::backend::Postgres(pgconninfo);
+        
+        dbsession.setConnection(pg_);
+        pg_.setProperty("show-queries", "true");
+
+        dbsession.mapClass<Cred>("cred");
+        
+        dbo::Transaction transaction(dbsession);
+
+        dbo::ptr<Cred> cred = dbsession.find<Cred>().where("cred_id = ?").bind(number);
+        const char *enc_username = cred->username_.c_str();
+        const char *enc_password = cred->password_.c_str();
+        
+        cout<<"Encrypted username: "<<enc_username<<endl;
+        cout<<"Encrypted password: "<<enc_password<<endl;
+
+        SpaceCrypto::CryptTwoFish cryptusername;
+        SpaceCrypto::CryptTwoFish cryptpassword;
+        
+        cryptusername.setEncString(enc_username);
+        cryptpassword.setEncString(enc_password);
+
+        cryptusername.setInputMode(SpaceCrypto::HEX);
+        cryptpassword.setInputMode(SpaceCrypto::HEX);
+        
+        cryptusername.setKey(my_key);
+        cryptpassword.setKey(my_key);
+
+        cryptusername.setOutputMode(SpaceCrypto::NORMAL);
+        cryptpassword.setOutputMode(SpaceCrypto::NORMAL);
+        
+        string text_username = cryptusername.Decrypt();
+        string text_password = cryptpassword.Decrypt();
+        
+        cout<<"PLAINTEXT username: "<<text_username<<endl;
+        cout<<"PLAINTEXT password: "<<text_password<<endl;
+
+        string resjson = "{\n    \"username\":\""+text_username+"\",\n    \"password\":\""+text_password+"\"\n}";
+
+        transaction.commit();
+
+        //decrypt them
+        //send them back to the client
+        *response << "HTTP/1.1 200 OK\r\nContent-Length: " << resjson.length() << "\r\n\r\n" << resjson;
     };
     
     //Get example simulating heavy work in a separate thread

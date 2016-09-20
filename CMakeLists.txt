@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 2.8.8)
 project (pes7-keystore)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Wno-ignored-qualifiers")
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.8)
@@ -97,6 +97,12 @@ target_link_libraries(keystore-http-server ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(keystore-http-server wt)
 target_link_libraries(keystore-http-server wtdbo)
 target_link_libraries(keystore-http-server wtdbopostgres)
+target_link_libraries(keystore-http-server cryptopp)
+
+#test wrapper
+add_executable(testwrapper testwrapper.cpp)
+target_link_libraries(testwrapper cryptopp)
+
 
 if(MSYS) #TODO: Is MSYS true when MSVC is true?
     target_link_libraries(keystore-http-server ws2_32 wsock32)

@@ -1,1 +1,1 @@
-/usr/bin/c++    -std=c++11 -Wall -Wextra    CMakeFiles/keystore-https-server.dir/keystore-https-server.cpp.o  -o keystore-https-server -rdynamic -lboost_regex -lboost_system -lboost_thread -lboost_filesystem -lboost_date_time -lpthread -lssl -lcrypto -lpthread 
+/usr/bin/c++    -std=c++11 -Wall -Wextra -Wno-ignored-qualifiers    CMakeFiles/keystore-https-server.dir/keystore-https-server.cpp.o  -o keystore-https-server -rdynamic -lboost_regex -lboost_system -lboost_thread -lboost_filesystem -lboost_date_time -lpthread -lssl -lcrypto -lpthread 
